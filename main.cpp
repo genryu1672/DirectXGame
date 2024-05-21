@@ -88,7 +88,7 @@ IDxcBlob* CompileShader(
 	IDxcIncludeHandler* includeHandler)
 {
 	//これからシェーダーをコンパイルする旨をログに出す
-	Log(ConvertString(std::format(L"Begin CompilerShader,path:{},profile{}\n,filePath,profile")));
+	Log(ConvertString(std::format(L"Begin CompilerShader,path:{},profile{}\n", filePath, profile)));
 	//hlslを読む
 	IDxcBlobEncoding* shaderSource = nullptr;
 	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
@@ -338,7 +338,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	swapChainDesc.Width = kCLientWidth;//画面の幅、ウィンドウのクライアント領域を同じものにしておく
 	swapChainDesc.Height = kCLientHeight;//画面の高さ、ウィンドウのクライアント領域を同じものにしておく
-	swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;//色の形式
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
 	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットとして利用する
 	swapChainDesc.BufferCount = 2;//ダブルバッファ
@@ -366,7 +366,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	//ディスクリプタの先頭を取得する
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStarHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -468,7 +468,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags =
-	D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//ジリアライズしてバイナリにする
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
@@ -505,8 +505,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	
-	
+
+
 	//shaderをコンパイルする
 	IDxcBlob* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxCompiler, includeHander);
 	assert(vertexShaderBlob != nullptr);
@@ -514,17 +514,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	IDxcBlob* pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxCompiler, includeHander);
 	assert(vertexShaderBlob != nullptr);
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature=rootSignature;/////////////////////////////////////
+	graphicsPipelineStateDesc.pRootSignature = rootSignature;/////////////////////////////////////
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),vertexShaderBlob->GetBufferSize() };
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize()};
+	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 	//書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	//利用するトポロジ（形状）のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	//どのように画面に打ち込むかの設定（気にしなくていい）
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -587,15 +587,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//基本的にビューポートと同じ字形が構成される
 	scissorRect.left = 0;
 	scissorRect.right = kCLientWidth;
-	scissorRect.top - 0;
+	scissorRect.top = 0;
 	scissorRect.bottom = kCLientHeight;
-
-
-
-
-
-
-
 
 
 	MSG msg{};
@@ -605,10 +598,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DispatchMessage(&msg);
 		}
 		else {
-			//fenceの値を更新
-			fenceValue++;
-			//GPUがここまでたどり着いたときに、fenceの値を指定した値に代入するようにSignalを送る
-			commandQueue->Signal(fence, fenceValue);
 
 			//これから書き込むバックバッファのインデックスを取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -637,24 +626,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->RSSetScissorRects(1, &scissorRect);//scissorRectを設定
 			//RootSignatureを設定。PSOに設定にしてるけど別途設定が必要
 			commandList->SetGraphicsRootSignature(rootSignature);
-
-
-
-
-
-
-
-
-
-
+			commandList->SetPipelineState(graphicsPipelineState);//PSOを設定
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);//VBVを設定
+			//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばいい。
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			//描画！（DrawCall/ドローコール)。３頂点で１つのインスタンス。インスタンスについては今後
+			commandList->DrawInstanced(3, 1, 0, 0);
 
 			//画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-	//今回はRenderTargetからPresentにする
+			//今回はRenderTargetからPresentにする
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 			//TransitionBarrierを張る
 			commandList->ResourceBarrier(1, &barrier);
-
 
 			//コマンドリストの内容を確定させる。すべてのコマンドを積んでからcloseすること
 			hr = commandList->Close();
@@ -666,7 +650,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//GPUとOSに画面交換を行うよう通知する
 			swapChain->Present(1, 0);
-
 
 			//fenceの値を更新
 			fenceValue++;
@@ -722,8 +705,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		debug->Release();
 	}
 
-
-
+	vertexResource->Release();
+	graphicsPipelineState->Release();
+	signatureBlob->Release();
+	if (errorBlob) {
+		errorBlob->Release();
+	}
+	rootSignature->Release();
+	pixelShaderBlob->Release();
+	vertexShaderBlob->Release();
 
 	return 0;
 }
