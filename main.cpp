@@ -745,7 +745,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			*wvpData = worldMatrix;
 
 			//WVPMatrixを作成して設定する
-			Matrix4x4 cameraMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameratransform.scale, cameratransform.rotate, cameratransform.translate);
 			Matrix4x4 viewMatrix = Invers(cameraMatrix);
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kCLientWidth) / float(kCLientHeight), 0.1f, 100.0f);
 			Matrix4x4 worldViewprojectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
