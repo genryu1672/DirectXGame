@@ -209,4 +209,41 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 	return ret;
 }
 
+//平行投影行列
+Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip)
+{
+	Matrix4x4 ret;
+	
+	ret.m[0][0] = 2.0f/(right-left);
+	ret.m[0][1] = 0.0f;
+	ret.m[0][2] = 0.0f;
+	ret.m[0][3] = 0.0f;
+
+	ret.m[1][0] = 0.0f;
+	ret.m[1][1] = 2.0f/(top-bottom);
+	ret.m[1][2] = 0.0f;
+	ret.m[1][3] = 0.0f;
+
+	ret.m[2][0] = 0.0f;
+	ret.m[2][1] = 0.0f;
+	ret.m[2][2] = 1.0f / (farClip - nearClip);
+	ret.m[2][3] = 0.0f;
+
+	ret.m[3][0] = (left+right)/(left-right);
+	ret.m[3][1] = (top+bottom)/(bottom-top);
+	ret.m[3][2] =nearClip/ (nearClip - farClip);
+	ret.m[3][3] = 1.0f;
+
+
+
+
+
+
+
+
+
+
+	return ret;
+}
+
 
