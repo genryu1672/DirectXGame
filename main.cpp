@@ -41,14 +41,17 @@ struct VertexData {
 	Vector3 nomral;
 };
 
-struct ModelData {
-	std::vector<VertexData>vertices;
-};
-
 struct MaterialData
 {
 	std::string textureFilepath;
 };
+
+struct ModelData {
+	std::vector<VertexData>vertices;
+	MaterialData material;
+};
+
+
 
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -327,8 +330,37 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	return resource;
 }
 
+//mtlファイルを読む関数
+MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
+{
+	//1、2必要な変数の宣言とファイルを開く
+	MaterialData materialData;//構築するMaterialData
+	std::string line;//ファイルから読んだ１行を格納するもの
+	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
+	assert(file.is_open());//とりあえず開けなかったら止める
+
+	while (std::getline(file, line))
+	{
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		//identifierに応じた処理
+		if (identifier == "map_Kd")
+		{
+			std::string textureFilename;
+			s >> textureFilename;
+			//連結してファイルパスにする
+			materialData.textureFilepath = directoryPath + "/" + textureFilename;
+		}
+
+	}
+	return materialData;
+
+}
+
 //Objファイルを読む関数
-ModelData LoadObjFile(const std::string& directorypath, const std::string& filename)
+ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename)
 {
 	//１，２必要な変数の宣言とファイルを開く
 	
@@ -337,7 +369,7 @@ ModelData LoadObjFile(const std::string& directorypath, const std::string& filen
 	std::vector<Vector3>normals;//法線
 	std::vector<Vector2>texcoords;//テクスチャ座標
 	std::string line;//ファイルから読んだ１行を格納するもの
-	std::ifstream file(directorypath + "/" + filename);//ファイルを開く
+	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
 	assert(file.is_open());//とりあえず開けなかったら止める
 
 	//3、ファイルを読み、ModelDataを構築
@@ -405,38 +437,28 @@ ModelData LoadObjFile(const std::string& directorypath, const std::string& filen
 			modelData.vertices.push_back(triangle[1]);
 			modelData.vertices.push_back(triangle[0]);
 		}
+		else if (identifier == "mtllib")
+		{
+			//materialTemplateLibraryファイルの名前を取得する
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にObjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);	
+		}
+
+
+
+
+
+
+
+
+
 	}
 	return modelData;
 }
 
-//mtlファイルを読む関数
-MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
-{
-	//1、2必要な変数の宣言とファイルを開く
-	MaterialData materialData;//構築するMaterialData
-	std::string line;//ファイルから読んだ１行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
-	assert(file.is_open());//とりあえず開けなかったら止める
 
-	while (std::getline(file,line))
-	{
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		//identifierに応じた処理
-		if (identifier == "map_Kd")
-		{
-			std::string textureFilename;
-			s >> textureFilename;
-			//連結してファイルパスにする
-			materialData.textureFilepath = directoryPath + "/" + textureFilename;
-		}
-
-	}
-	return materialData;
-
-}
 
 
 
