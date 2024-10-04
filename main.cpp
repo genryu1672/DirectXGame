@@ -865,8 +865,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	//Blendstartの設定
 	D3D12_BLEND_DESC blendDesc{};
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	
+	//通常
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	
+	//加算合成
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+
+
+
+
+
+
+
+
+
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	
+
+
+
+
 
 	//RasiterzerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -1156,7 +1184,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	Transform cameratransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 
 	
-
+	
 
 
 	MSG msg{};
@@ -1174,7 +1202,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			
 			//選択して色が変えられる
 			ImGui::Begin("Window");
-			ImGui::DragFloat3("color", &materialData->x, 0.01f);//ImGui::DragFloat3("color", &materialData->x, 0.01f);
+			ImGui::DragFloat4("color", &materialData->x, 0.01f);//ImGui::DragFloat3("color", &materialData->x, 0.01f);
 			ImGui::DragFloat3("rotate", &transform.rotate.x,0.01f);
 			ImGui::End();
 
