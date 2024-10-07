@@ -1,3 +1,5 @@
+#define DIRECTINPUT_VERSION 0x0800//DirectInputのバージョン指定
+#include<dinput.h>
 #include<Windows.h>
 #include<cstdint>
 #include<string>
@@ -16,12 +18,14 @@
 #include<fstream>
 #include<sstream>
 #include<vector>
+#include"Input.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
-	
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
 struct Vector4 {
 	float x;
 	float y;
@@ -344,7 +348,7 @@ MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const st
 		std::string identifier;
 		std::istringstream s(line);
 		s >> identifier;
-
+			
 		//identifierに応じた処理
 		if (identifier == "map_Kd")
 		{
@@ -517,6 +521,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		wc.hInstance,
 		nullptr
 	);
+	
 	//#ifdef DEBUG
 	//	ID3D12Debug1* debugController = nullptr;
 	//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
@@ -545,6 +550,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 	ShowWindow(hwnd, SW_SHOW);
+
+	//ポインタ
+	Input* input = nullptr;
+
+	//入力の初期化
+	input = new Input();
+	input->Initialize(wc.hInstance, hwnd);
+
+	//入力解放
+	delete input;
 
 	IDXGIFactory7* dxgiFactory = nullptr;
 
@@ -587,6 +602,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 	Log("Complete create D3D12Device!!!\n");
+
+	
+
+
+
+
+
+
+
+
+
+
 
 	//#ifdef _DEBUG
 	//	ID3D12Debug1* debugController = nullptr;
@@ -1175,6 +1202,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			DispatchMessage(&msg);
 		}
 		else {
+			
+			//キーボード情報の取得開始
+			keyboard->Acquire();
+
+			//全キーの入力状態を取得する
+			BYTE key[256] = {};
+			keyboard->GetDeviceState(sizeof(key),key);
+
+			//数字の0キーが押されていたら
+			if (key[DIK_0])
+			{
+				OutputDebugStringA("Hit 0\n");//出力ウィンドウに「Hit 0」と表示
+			}
+
+
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
