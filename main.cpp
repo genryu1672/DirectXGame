@@ -18,6 +18,7 @@
 #include<vector>
 #include"object3d.hlsli"
 #include"Particle.hlsli"
+#include<wrl.h>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -874,10 +875,58 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
+
+	//Resourceの作成
+	const uint32_t kNumInstance = 10;//インスタンス数
+	//Instancing用のTransformationMatrixリソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource =
+	CreateBufferResource(device, sizeof(TransformationMatrix) * kNumInstance);
+	//書き込むためのアドレスを取得
+	TransformationMatrix* instancingData = nullptr;
+	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+
+	//単位行列を書き込んでおく
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		instancingData[index].WVP = MakeIdentity4x4();
+		instancingData[index].World = MakeIdentity4x4();
+	}
+
+	//DescriptorSizeを取得しておく
+	//const uint32_t4 descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//const uint32_t4 descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	//const uint32_t4 descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+
+	//SRVの作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = kNumInstance;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
+	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
+
+	//Transformの作成
+	Transform transforms[kNumInstance];
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		transforms[index].scale = { 1.0f,1.0f,1.0f };
+		transforms[index].rotate = { 0.0f,0.0f,0.0f };
+		transforms[index].translate = { index * 0.1f,index * 0.1f,index * 0.1f };
+	}
+	
+	
 	
 
 
 
+
+	
 	//ジリアライズしてバイナリにする
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
@@ -1261,6 +1310,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			Matrix4x4 worldViewprojectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 			*transformationMatrixData = worldViewprojectionMatrix;
 
+			Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
+			for (uint32_t index = 0; index < kNumInstance; ++index)
+			{
+				Matrix4x4 worldMatrix =
+					MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
+
+				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+				instancingData[index].WVP = worldViewProjectionMatrix;
+				instancingData[index].World = worldMatrix;
+			}
+
+
+
+
+
+
+
 
 
 			//これから書き込むバックバッファのインデックスを取得
@@ -1303,7 +1369,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 			//wvp用のCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+
+			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
+			commandList->SetGraphicsRootShaderResourceView(1, instancingSrvHandleGPU);
+
 
 			//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);///////////////////////////////////
@@ -1327,6 +1397,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			//commandList->DrawInstanced(3, 1, 0, 0);
 			//commandList->DrawInstanced(6, 1, 0, 0);
 			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+
+			//描画!６頂点の板ポリゴンを、kNumInstance(今回は１０）だけInstance描画を行う
+			commandList->DrawInstanced(UINT(modelData.vertices.size()), kNumInstance, 0, 0);
 
 
 

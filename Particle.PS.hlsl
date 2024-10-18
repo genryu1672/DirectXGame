@@ -1,19 +1,16 @@
 #include"Particle.hlsli"
 struct Pixelshaderoutput {
-float32_t4 color:SV_TARGET0;
+float4 color:SV_TARGET0;
 
 };
-Texture2D<float32_t4>gTexture:register(t0);
+Texture2D<float4>gTexture:register(t0);
 SamplerState gSampler:register(s0);
 struct Material {
-	float32_t4 color;
+	float4 color;
 };
 ConstantBuffer<Material>gMaterial:register(b0);
 
-struct TransformationMatrix {
-	float32_t4x4 WVP;
-	float32_t4x4 World;
-};
+
 
 
 
