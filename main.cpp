@@ -558,9 +558,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	input = new Input();
 	input->Initialize(wc.hInstance, hwnd);
 
-	//入力解放
-	delete input;
-
 	IDXGIFactory7* dxgiFactory = nullptr;
 
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -1386,6 +1383,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	device->Release();
 	useAdapter->Release();
 	dxgiFactory->Release();
+
+	//入力解放
+	delete input;
+
+
 #ifdef _DEBUG
 	debugController->Release();
 #endif
