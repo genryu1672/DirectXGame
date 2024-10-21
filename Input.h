@@ -8,7 +8,7 @@
 //入力
 class Input
 {
-public://メンバ関数
+public://メンバ関数(宣言）
 	//初期化
 	void Initialize(HINSTANCE hInstance,HWND hwnd);
 	//更新
@@ -16,6 +16,12 @@ public://メンバ関数
 
 	//namespace省略
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	bool PushKey(BYTE keyNumber);
+
+	//全キーの状態
+	BYTE key[256] = {};
+
 
 private://メンバ変数
 	//キーボードのデバイス
