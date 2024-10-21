@@ -560,8 +560,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	input->Update();
 
-	//入力解放
-	delete input;
+	
 
 	IDXGIFactory7* dxgiFactory = nullptr;
 
@@ -1381,6 +1380,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	device->Release();
 	useAdapter->Release();
 	dxgiFactory->Release();
+
+	//入力解放
+	delete input;
+
+
 #ifdef _DEBUG
 	debugController->Release();
 #endif
