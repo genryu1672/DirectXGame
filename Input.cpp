@@ -60,6 +60,6 @@ bool Input::PushKey(BYTE keyNumber)
 	//
 	//}
 
-
+	//そうでなければfalseを返す
 	return false;
 }
