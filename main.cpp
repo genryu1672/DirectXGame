@@ -1226,6 +1226,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		instancingData[index].World = MakeIdentity4x4();
 	}
 
+	//SRVの作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = kNumInstance;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle();
+
+
+
 	MSG msg{};
 	while (msg.message != WM_QUIT) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
