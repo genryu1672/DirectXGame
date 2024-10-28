@@ -19,6 +19,7 @@
 #include<sstream>
 #include<vector>
 #include"Input.h"
+#include"WinAPP.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -455,10 +456,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//ポインタ
 	Input* input = nullptr;
 
+	WinApp* winApp = nullptr;
+
+
 	//入力の初期化
 	input = new Input();
 	input->Initialize(wc.hInstance, hwnd);
 
+	//WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialiize();
 	//input->Update();
 
 	
@@ -1307,6 +1314,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	//入力解放
 	delete input;
+
+	//WindowsAPI解放
+	delete winApp;
 
 
 #ifdef _DEBUG
