@@ -33,6 +33,9 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 
 void Input::Update()
 {
+	//前回のキー入力を保存(キーデータの複製)
+	memcpy(keyPre, key, sizeof(key));
+	
 	//キーボード情報の取得開始
 	keyboard->Acquire();
 
@@ -48,18 +51,17 @@ bool Input::PushKey(BYTE keyNumber)
 	{
 		return true;
 	}
-	
-	//座標操作
-	//if (key[DIK_UP] || key[DIK_DOWN] || key[DIK_RIGHT] || key[DIK_LEFT])
-	//{
-	//	if (key[DIK_UP]) { object3ds[0].position.y += 1.0f; }
-	//	else if(key[DIK_DOWN]) { object3ds[0].position.y -= 1.0f; }
-	//	
-	//	if (key[DIK_RIGHT]) { object3ds[0].position.x += 1.0f; }
-	//	else if (key[DIK_LEFT]) { object3ds[0].position.x -= 1.0f; }
-	//
-	//}
 
 	//そうでなければfalseを返す
+	return false;
+}
+
+bool Input::TriggerKey(BYTE keyNumber)
+{
+	//トリガー処理
+	if (key[keyNumber]!=0&&keyPre[keyNumber]==0)
+	{
+		return true;
+	}
 	return false;
 }

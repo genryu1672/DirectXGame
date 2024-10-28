@@ -22,11 +22,18 @@ public://メンバ関数(宣言）
 	//全キーの状態
 	BYTE key[256] = {};
 
+	//前回の全キーの状態
+	BYTE keyPre[256] = {};
+
+	//トリガー判定処理
+	bool TriggerKey(BYTE keyNumber);
 
 private://メンバ変数
 	//キーボードのデバイス
 	ComPtr<IDirectInputDevice8>keyboard;
 
+	//DirectInputのインスタンス	
+	ComPtr<IDirectInput8>directInput;
 
 };
 
