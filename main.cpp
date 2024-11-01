@@ -22,7 +22,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
-
+//構造体
 struct Vector4 {
 	float x;
 	float y;
@@ -58,7 +58,11 @@ struct TransformationMatrix {
 	Matrix4x4 World;
 };
 
-
+struct Particle
+{
+	Transform transform;
+	Vector3 velocity;
+};
 
 
 //ウィンドウプロシージャ
