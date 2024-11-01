@@ -1142,10 +1142,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	*transformationMatrixDataSprite = MakeIdentity4x4();
 
 	//CPUで動かす用のTransform
-	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+	Transform particlesprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
 	//Sprite用のWorldViewProjectionMatrixを作る
-	Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+	Matrix4x4 worldMatrixSprite = MakeAffineMatrix(particlesprite.scale, particlesprite.rotate, particlesprite.translate);
 	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
 	Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kCLientWidth), float(kCLientHeight), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
@@ -1268,7 +1268,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, desriptorSizeSRV, 3);
 	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
 
-	//Transformの作成
+	//Particleの作成
 	Particle particles[kNumInstance];
 	for (uint32_t index = 0; index < kNumInstance; ++index)
 	{
@@ -1313,7 +1313,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			for (uint32_t index = 0; index < kNumInstance; ++index) {
 
 				Matrix4x4 worldMatrix =
-					MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
+					MakeAffineMatrix(particles[index].transform.scale, particles[index].transform.rotate, particles[index].transform.translate);
 				Matrix4x4 worldViewprojectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewprojectionMatrix;
 				instancingData[index].World = worldMatrix;
