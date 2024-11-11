@@ -116,3 +116,11 @@ void WinApp::Initialiize()
 void WinApp::Update()
 {
 }
+
+void WinApp::Finalize()
+{
+	CloseWindow(hwnd);
+	
+	//終了処理
+	CoUninitialize();
+}

@@ -462,7 +462,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	//入力の初期化
 	input = new Input();
-	input->Initialize(winApp->GetHInstance(),winApp->GetHwnd());
+	input->Initialize(winApp);
 
 	//WindowsAPIの初期化
 	winApp = new WinApp();
@@ -1316,14 +1316,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//入力解放
 	delete input;
 
-	//WindowsAPI解放
-	delete winApp;
-
-
 #ifdef _DEBUG
 	debugController->Release();
 #endif
-	CloseWindow(winApp->GetHwnd());
 
 	vertexResource->Release();
 	graphicsPipelineState->Release();
@@ -1349,8 +1344,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		debug->Release();
 	}
 
-	//終了処理
-	CoUninitialize();
+	//WindowsAPIの終了処理
+	winApp->Finalize();
 
+	//WindowsAPI解放
+	delete winApp;
+	winApp = nullptr;
 	return 0;
 }

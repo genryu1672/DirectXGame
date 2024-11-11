@@ -3,6 +3,7 @@
 #include<Windows.h>
 #include<wrl.h>
 #include<dinput.h>
+#include"WinApp.h"
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 //入力
@@ -10,7 +11,7 @@ class Input
 {
 public://メンバ関数(宣言）
 	//初期化
-	void Initialize(HINSTANCE hInstance,HWND hwnd);
+	void Initialize(WinApp*winApp);
 	//更新
 	void Update();
 
@@ -35,5 +36,7 @@ private://メンバ変数
 	//DirectInputのインスタンス	
 	ComPtr<IDirectInput8>directInput;
 
+	//WindowsAPI
+	WinApp* winApp = nullptr;
 };
 
