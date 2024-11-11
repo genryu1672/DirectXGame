@@ -2,6 +2,9 @@
 #include"Windows.h"
 class WinApp
 {
+public://定数
+	const int32_t kCLientWidth = 1280;
+	const int32_t kCLientHeight = 720;
 public://静的メンバ変数
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 

@@ -43,8 +43,8 @@ void WinApp::Initialiize()
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	
 
-	const int32_t kCLientWidth = 1280;
-	const int32_t kCLientHeight = 720;
+	//const int32_t kCLientWidth = 1280;
+	//const int32_t kCLientHeight = 720;
 
 	RECT wrc = { 0,0,kCLientWidth,kCLientHeight };
 
