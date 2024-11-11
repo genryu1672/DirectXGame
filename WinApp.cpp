@@ -1,7 +1,7 @@
 #include "WinApp.h"
 #include<cmath>
 #include"externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_win32.cpp"
+#include "externals/imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 //#include"Windows.h"
 //ウィンドウプロシージャ
@@ -123,4 +123,21 @@ void WinApp::Finalize()
 	
 	//終了処理
 	CoUninitialize();
+}
+
+bool WinApp::ProcessMessage()
+{
+	MSG msg{};
+	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	
+	if (msg.message != WM_QUIT)
+	{
+		return true;
+	}
+	
+	
+	return false;
 }

@@ -525,16 +525,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 
-	//#ifdef _DEBUG
-	//	ID3D12Debug1* debugController = nullptr;
-	//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-	//		//デバックレイヤーを有効化する
-	//		debugController->EnableDebugLayer();
-	//		//さらにGPU側でもチェックを行うようにする
-	//		debugController->SetEnableGPUBasedValidation(TRUE);
-	//	}
-	//
-	//#endif
+	#ifdef _DEBUG
+		ID3D12Debug1* debugController = nullptr;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+			//デバックレイヤーを有効化する
+			debugController->EnableDebugLayer();
+			//さらにGPU側でもチェックを行うようにする
+			debugController->SetEnableGPUBasedValidation(TRUE);
+		}
+	
+	#endif
 
 #ifdef _DEBUG
 	ID3D12InfoQueue* infoQueue = nullptr;
@@ -1105,13 +1105,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 
-	MSG msg{};
-	while (msg.message != WM_QUIT) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else {
+	
+	while (true) {
+		
+		if (winApp->ProcessMessage())
+		{
+			//ゲームループを抜ける
+			break;
+		 }
 			
 			//数字の0キーが押されていたら
 			if (input->PushKey(DIK_0))
@@ -1298,7 +1299,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 
-	}
+	
 	//解放処理
 	CloseHandle(fenceEvent);
 	fence->Release();

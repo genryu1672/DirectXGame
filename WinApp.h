@@ -24,8 +24,11 @@ public://メンバ変数
 	//getter
 	HWND GetHwnd()const { return hwnd; }
 	HINSTANCE GetHInstance() const { return wc.hInstance; }
+	
+	//メッセージの処理
+	bool ProcessMessage();
 
-private:
+private://関数
 	//ウインドウハンドル
 	HWND hwnd = nullptr;
 
