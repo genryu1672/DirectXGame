@@ -9,7 +9,7 @@
 #include<format>
 #include<dxgidebug.h>
 #include<dxcapi.h>
-#include"externals/imgui/imgui.h"
+//#include"externals/imgui/imgui.h"
 #include"externals/imgui/imgui_impl_dx12.h"
 //#include"externals/imgui/imgui_impl_win32.h"
 #include"Matrix.h"
@@ -20,7 +20,7 @@
 #include<vector>
 #include"Input.h"
 #include"WinAPP.h"
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")

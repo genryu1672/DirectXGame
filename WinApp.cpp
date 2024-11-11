@@ -1,9 +1,11 @@
 #include "WinApp.h"
 #include<cmath>
+#include"externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_win32.cpp"
-
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//#include"Windows.h"
 //ウィンドウプロシージャ
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
 	{
@@ -38,8 +40,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 void WinApp::Initialiize()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-
+	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	
 
 	const int32_t kCLientWidth = 1280;
 	const int32_t kCLientHeight = 720;
