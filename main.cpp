@@ -1270,14 +1270,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	//Particleの作成
 	Particle particles[kNumInstance];
+	
+
+	
 	for (uint32_t index = 0; index < kNumInstance; ++index)
 	{
 		particles[index].transform = { 1.0f,1.0f,1.0f };
 		particles[index].transform = { 0.0f,0.0f,0.0f };
 		particles[index].transform = { index * 0.1f,index * 0.1f,index * 0.1f };
+		particles[index].velocity = { 0.0f,1.0f,0.0f };
 	}
 
+	//Δtを定義。
+	const float kDeltaTime = 1.0f / 60.0f;
 
+	//パーティクルを動かすやつ
+	bool useUpdate = false;
+
+	//メインループ
 	MSG msg{};
 	while (msg.message != WM_QUIT) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -1295,6 +1305,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			ImGui::Begin("Window");
 			ImGui::DragFloat4("color", &materialData->x, 0.01f);//ImGui::DragFloat3("color", &materialData->x, 0.01f);
 			ImGui::DragFloat3("rotate", &transform.rotate.x, 0.01f);
+			ImGui::Checkbox("isPaticle", &useUpdate);
 			ImGui::End();
 
 			//transform.rotate.y += 0.03f;
@@ -1317,6 +1328,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 				Matrix4x4 worldViewprojectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewprojectionMatrix;
 				instancingData[index].World = worldMatrix;
+				
+				if (useUpdate == true)
+				{
+					particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+				}
 			}
 
 			

@@ -5,6 +5,30 @@
 #include<cmath>
 #define _USE_MATH_DEFINES
 
+//速度を設定する(足し算）
+Vector3& operator+=(Vector3& ihv, const Vector3& rhv)
+{
+	ihv.x += rhv.x;
+	ihv.y += rhv.y;
+	ihv.z += rhv.z;
+	return ihv;
+}
+
+//掛け算
+Vector3& operator*=(Vector3& v, float s)
+{
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+	return v;
+}
+
+const Vector3 operator*(const Vector3& v, float s)
+{
+	Vector3 temp(v);
+	return temp *= s;
+}
+
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 Result = {};
 	for (int i = 0; i < 4; i++) {
