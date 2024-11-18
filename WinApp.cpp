@@ -25,7 +25,7 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 }
 void WinApp::Initialiize()
 {
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	CoInitializeEx(0, COINIT_MULTITHREADED);
 	//const int32_t kCLientWidth = 1280;
 	//const int32_t kCLientHeight = 720;
 
@@ -111,7 +111,7 @@ bool WinApp::ProcessMessage()
 		DispatchMessage(&msg);
 	}
 	
-	if (msg.message != WM_QUIT)
+	if (msg.message == WM_QUIT)
 	{
 		return true;
 	}
