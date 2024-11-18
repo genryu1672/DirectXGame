@@ -469,7 +469,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	winApp->Initialiize();
 	//input->Update();
 
-	
+#ifdef _DEBUG
+	ID3D12Debug1* debugController = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		//デバックレイヤーを有効化する
+		debugController->EnableDebugLayer();
+		//さらにGPU側でもチェックを行うようにする
+		debugController->SetEnableGPUBasedValidation(TRUE);
+	}
+
+#endif
 
 	IDXGIFactory7* dxgiFactory = nullptr;
 
@@ -525,16 +534,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 
-	//#ifdef _DEBUG
-	//	ID3D12Debug1* debugController = nullptr;
-	//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-	//		//デバックレイヤーを有効化する
-	//		debugController->EnableDebugLayer();
-	//		//さらにGPU側でもチェックを行うようにする
-	//		debugController->SetEnableGPUBasedValidation(TRUE);
-	//	}
-	//
-	//#endif
+	
 
 #ifdef _DEBUG
 	ID3D12InfoQueue* infoQueue = nullptr;

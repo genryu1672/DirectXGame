@@ -71,20 +71,20 @@ void WinApp::Initialiize()
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc);
 
-	////ウィンドウの生成
-	//HWND hwnd = CreateWindow(
-	//	wc.lpszClassName,
-	//	L"CG2",
-	//	WS_OVERLAPPEDWINDOW,
-	//	CW_USEDEFAULT,
-	//	CW_USEDEFAULT,
-	//	wrc.right - wrc.left,
-	//	wrc.bottom - wrc.top,
-	//	nullptr,
-	//	nullptr,
-	//	wc.hInstance,
-	//	nullptr
-	//);
+	//ウィンドウの生成
+	hwnd = CreateWindow(
+		wc.lpszClassName,
+		L"CG2",
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		wrc.right - wrc.left,
+		wrc.bottom - wrc.top,
+		nullptr,
+		nullptr,
+		wc.hInstance,
+		nullptr
+	);
 
 	//#ifdef DEBUG
 	//	ID3D12Debug1* debugController = nullptr;
