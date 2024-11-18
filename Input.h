@@ -31,7 +31,7 @@ public://メンバ関数(宣言）
 
 private://メンバ変数
 	//キーボードのデバイス
-	ComPtr<IDirectInputDevice8>keyboard;
+	ComPtr<IDirectInputDevice8> keyboard;
 
 	//DirectInputのインスタンス	
 	ComPtr<IDirectInput8>directInput;

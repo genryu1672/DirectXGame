@@ -1,19 +1,14 @@
 //#define DIRECTINPUT_VERSION  0x0800//DirectInputのバージョン指定
 #include "Input.h"
 #include <cassert>
-//#include<wrl.h>
-//#include<dinput.h>
-//using namespace Microsoft::WRL;
 void Input::Initialize(WinApp* winApp)
 {
 	HRESULT result;
 	//借りてきたWinAppのインスタンスを記録
 	this->winApp = winApp;
 
-
-
 	//DirectInputの初期化(一度だけ行う処理)
-	IDirectInput8* directInput = nullptr;
+	//IDirectInput8* directInput = nullptr;
 	result = DirectInput8Create(
 		winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
 		(void**)&directInput, nullptr);
@@ -21,7 +16,7 @@ void Input::Initialize(WinApp* winApp)
 
 	//キーボードデバイスの生成
 	//IDirectInputDevice8* keyboard = nullptr;
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	result = directInput->CreateDevice(GUID_SysKeyboard, keyboard.GetAddressOf(), nullptr);
 	assert(SUCCEEDED(result));
 
 	//入力データ形式のセット
@@ -30,8 +25,7 @@ void Input::Initialize(WinApp* winApp)
 
 	//排他制御レベルのセット
 	result = keyboard->SetCooperativeLevel(
-
-		winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	assert(SUCCEEDED(result));
 }
 

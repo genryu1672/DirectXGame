@@ -425,51 +425,22 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			//基本的にObjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
 			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);	
 		}
-
-
-
-
-
-
-
-
-
 	}
 	return modelData;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
-
-	
+	WinApp* winApp = nullptr;
+	//WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialiize();
 
 	//ポインタ
 	Input* input = nullptr;
 
-	WinApp* winApp = nullptr;
-
-
 	//入力の初期化
 	input = new Input();
 	input->Initialize(winApp);
-
-	//WindowsAPIの初期化
-	winApp = new WinApp();
-	winApp->Initialiize();
-	//input->Update();
-
-	
 
 	IDXGIFactory7* dxgiFactory = nullptr;
 
@@ -512,19 +483,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 
 	Log("Complete create D3D12Device!!!\n");
-
-	
-
-
-
-
-
-
-
-
-
-
-
+//デバッグレイヤー
 	#ifdef _DEBUG
 		ID3D12Debug1* debugController = nullptr;
 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
@@ -534,7 +493,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			debugController->SetEnableGPUBasedValidation(TRUE);
 		}
 	
-	#endif
+	#endif// _DEBUG
+		
+		// リソースリークチェッカー
+
 
 #ifdef _DEBUG
 	ID3D12InfoQueue* infoQueue = nullptr;
@@ -544,16 +506,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		//エラー時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//警告時に止まる
-		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 		//解放
 		infoQueue->Release();
-
-
-
 		//抑制するメッセージのID
 		D3D12_MESSAGE_ID denyIds[] = {
 			//WindowsでのDXGIデバックレイヤーとDX12デバックレイヤーの相互作用バグによるエラーメッセージ
-			//https//stackoverflow.com/question/6980524/directx-12-application-is-crashing-in-windows-11
+			//https://stackoverflow.com/question/6980524/directx-12-application-is-crashing-in-windows-11
 			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
 		};
 		//抑制するレベル
@@ -565,18 +524,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		filter.DenyList.pSeverityList = severities;
 		//指定したメッセージの表示を抑制する
 		infoQueue->PushStorageFilter(&filter);
-
-
-
-
-
+		infoQueue->Release();
 	}
 #endif
-
-	
-	
-
-
 	//コマンドキューを生成する
 	ID3D12CommandQueue* commandQueue = nullptr;
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
@@ -662,22 +612,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	////TransitionBarrierを張る
 	//commandList->ResourceBarrier(1, &barrier);
-
-
-
-
-
-
+	
 	////描画先のRTVを設定
 	//commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
 	////指定した色で画面全体をクリアする
 	//float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色RGBAの順
 	//commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 	
-
-
-
-
 	////画面に描く処理はすべて終わり、画面に映すので、状態を遷移
 	////今回はRenderTargetからPresentにする
 	
@@ -687,18 +628,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	////TransitionBarrierを張る
 	//commandList->ResourceBarrier(1, &barrier);
 
-
-
-
-
-
-
-
-
-
-
-
-	//
+	
 	////コマンドリストの内容を確定させる。すべてのコマンドを積んでからcloseすること
 	//hr = commandList->Close();
 	//assert(SUCCEEDED(hr));
@@ -710,7 +640,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	////GPUとOSに画面交換を行うよう通知する
 	//swapChain->Present(1, 0);
 
-	//
+	
 
 
 
@@ -1100,12 +1030,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	Transform cameratransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
-
-	
-
-
-
-	
 	while (true) {
 		
 		if (winApp->ProcessMessage())
@@ -1140,9 +1064,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			{
 				transform.translate.x += 0.01;
 			}
-
-
-
 
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
@@ -1221,11 +1142,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			//指定した深度で画面全体をクリアする
 			commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-
-
-
-
-
 			//ImGuiの内部コマンドを生成する
 			ImGui::Render();
 
@@ -1296,10 +1212,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			hr = commandList->Reset(commandAllocator, nullptr);
 			assert(SUCCEEDED(hr));
 		}
+	//WindowsAPIの終了処理
+	winApp->Finalize();
 
-
-
-	
 	//解放処理
 	CloseHandle(fenceEvent);
 	fence->Release();
@@ -1314,8 +1229,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	useAdapter->Release();
 	dxgiFactory->Release();
 
-	//入力解放
-	delete input;
 
 #ifdef _DEBUG
 	debugController->Release();
@@ -1331,6 +1244,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	pixelShaderBlob->Release();
 	vertexShaderBlob->Release();
 
+
+
 	//ImGuiの終了処理。
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -1344,9 +1259,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 		debug->Release();
 	}
-
-	//WindowsAPIの終了処理
-	winApp->Finalize();
+	//入力解放
+	delete input;
 
 	//WindowsAPI解放
 	delete winApp;
