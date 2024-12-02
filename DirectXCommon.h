@@ -2,7 +2,7 @@
 #include<d3d12.h>
 #include<dxgi1_6.h>
 #include<wrl.h>
-
+#include"WinApp.h"
 //前方宣言
 class WinApp;
 
@@ -55,6 +55,8 @@ private://関数
 	void ImGuiInitilize();
 
 private://メンバ変数
+
+	HRESULT hr;
 
 	//WindosAPI
 	WinApp* winApp = nullptr;
