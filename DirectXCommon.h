@@ -67,6 +67,13 @@ private://関数
 	//ImGuiの初期化
 	void ImGuiInitilize();
 
+
+	//描画前処理
+	void PreDraw();
+	
+	//描画後処理
+	void PostDraw();
+
 	//SRV専用のデスクリプタハンドル取得関数を作成する。
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);//SRV用
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
@@ -102,7 +109,6 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<IDxcCompiler3> dxCompiler = nullptr;
 
 	//SwapChainからresourceを引っ張ってくる
-
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;

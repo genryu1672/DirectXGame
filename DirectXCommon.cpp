@@ -468,6 +468,16 @@ void DirectXCommon::ImGuiInitilize()
 	);
 }
 
+void DirectXCommon::PreDraw()
+{
+
+}
+
+void DirectXCommon::PostDraw()
+{
+
+}
+
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index)
 {
 	return GetCPUDescriptorHandle(srvDescriptorHeap,desriptorSizeSRV,index);
