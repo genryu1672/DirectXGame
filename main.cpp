@@ -3,11 +3,8 @@
 #include<Windows.h>
 #include<cstdint>
 #include<string>
-#include<d3d12.h>
-#include<dxgi1_6.h>
 #include<cassert>
 #include<format>
-#include<dxgidebug.h>
 #include<dxcapi.h>
 #include"DirectXCommon.h"
 //#include"externals/imgui/imgui.h"
@@ -58,19 +55,6 @@ struct MaterialData
 struct ModelData {
 	std::vector<VertexData>vertices;
 	MaterialData material;
-};
-
-
-struct D3DResourceLeakChacker {
-	~D3DResourceLeakChacker() {
-		//リソースリークチェック
-		Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-			debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		}
-	}
 };
 
 
@@ -216,7 +200,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 }
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
-	D3DResourceLeakChacker leakCheck;
+	//D3DResourceLeakChacker leakCheck;
 
 	WinApp* winApp = nullptr;
 	//WindowsAPIの初期化

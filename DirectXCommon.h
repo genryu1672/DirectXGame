@@ -5,7 +5,8 @@
 #include<string>
 #include<array>
 #include<dxcapi.h>
-
+#include<chrono>
+#include<thread>
 #include"externals/DirectXTex/DirectXTex.h"
 class WinApp;
 
@@ -89,7 +90,6 @@ public:
 	ID3D12Device* GetDevice()const { return device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandlist()const { return commandList.Get(); }
 	ID3D12DescriptorHeap* GetSrvDescriptorHeap()const { return srvDescriptorHeap.Get(); }
-	ID3D12DescriptorHeap* GetRtvDescriptorHeap()const { return rtvDescriptorHeap.Get(); }
 	HANDLE GetFenceEvent()const { return fenceEvent; }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
