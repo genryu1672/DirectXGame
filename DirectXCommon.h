@@ -5,8 +5,7 @@
 #include<string>
 #include<array>
 #include<dxcapi.h>
-#include<chrono>
-#include<thread>
+
 #include"externals/DirectXTex/DirectXTex.h"
 class WinApp;
 
@@ -17,6 +16,8 @@ public://メンバ変数
 	void Initialize(WinApp*winApp);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource>CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height);
+	
+	//シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 		//CompilerするShaderファイルへのパス
 		const std::wstring& filePath,
@@ -83,6 +84,22 @@ public:
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);//DSV用
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
+	//getter
+	ID3D12Device* GetDevice()const { return device.Get(); }
+	ID3D12GraphicsCommandList* GetCommandlist()const { return commandList.Get(); }
+	ID3D12DescriptorHeap* GetSrvDescriptorHeap()const { return srvDescriptorHeap.Get(); }
+	ID3D12DescriptorHeap* GetRtvDescriptorHeap()const { return rtvDescriptorHeap.Get(); }
+	HANDLE GetFenceEvent()const { return fenceEvent; }
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+
+	//CreateTextureResourceを作成する
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+	
+	//Loadtexture関数を作る
+	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
+
 private://メンバ変数
 
 	HRESULT hr;
