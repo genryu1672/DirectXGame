@@ -1437,7 +1437,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 #endif
 	CloseWindow(hwnd);
 
-
+	wvpResource->Release();
+	materialResource->Release();
+	indexResourceSprite->Release();
+	wvpResource->Release();
+	textureResource2->Release();
+	textureResource->Release();
 	vertexResource->Release();
 	graphicsPipelineState->Release();
 	signatureBlob->Release();
