@@ -16,7 +16,6 @@ public://メンバ変数
 	//初期化
 	void Initialize(WinApp*winApp);
 
-	Microsoft::WRL::ComPtr<ID3D12Resource>CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height);
 	
 	//シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
@@ -25,9 +24,12 @@ public://メンバ変数
 		//Compilerに使用するProfile
 		const wchar_t* profile);
 
-	    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap( D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+	    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap( ID3D12Device* device,D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 private://関数
+
+	void CreateDepthStencilTextureResource();
+
 
 	//デバイスの生成
 
@@ -42,8 +44,8 @@ private://関数
 	//スワップチェーンの生成
 	void CreateSwapChain();
 	
-	//深度バッファの生成
-	void DepthCreateBufferView();
+	////深度バッファの生成
+	//void DepthCreateBufferView();
 	
 	//各種デスクリプタヒープの生成
 	void CreateAllDescriptorHeap();
@@ -111,6 +113,8 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
+
 	//コマンド関連の初期化
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
@@ -165,5 +169,9 @@ private://メンバ変数
 	HANDLE fenceEvent;
 
 	UINT64 fenceValue = 0;
+
+	D3D12_RESOURCE_BARRIER barrier{};
+
+
 };
 
