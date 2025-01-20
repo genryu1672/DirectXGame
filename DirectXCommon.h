@@ -8,6 +8,7 @@
 #include<chrono>
 #include<thread>
 #include"externals/DirectXTex/DirectXTex.h"
+#include<chrono>
 class WinApp;
 
 class DirectXCommon
@@ -172,6 +173,13 @@ private://メンバ変数
 
 	D3D12_RESOURCE_BARRIER barrier{};
 
+	//FPS固定初期化
+	void InitilizeFixFPS();
 
+	//FPS固定更新
+	void UpdateFixFPS();
+
+	//記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
 };
 
