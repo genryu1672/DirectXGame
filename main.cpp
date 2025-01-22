@@ -880,15 +880,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	
 	inputElementDescs[1].SemanticName = "TEXCOORD";
 	inputElementDescs[1].SemanticIndex = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	
+	inputElementDescs[2].SemanticName = "NORMAL";
+	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
@@ -1020,6 +1026,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			vertexData[start].position.w = 1.0f;
 			vertexData[start].texcoord.x = float(lonIndex) / float(kSubdivision);
 			vertexData[start].texcoord.y = 1.0f-float(latIndex)/float(kSubdivision);
+			vertexData[start].nomral.x = vertexData[start].position.x;
+			vertexData[start].nomral.y = vertexData[start].position.y;
+			vertexData[start].nomral.z = vertexData[start].position.z;
 
 			//b
 			vertexData[start+1].position.x = cos(lat+kLatEvery) * cos(lon);
@@ -1028,6 +1037,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			vertexData[start+1].position.w = 1.0f;
 			vertexData[start+1].texcoord.x = float(lonIndex) / float(kSubdivision);
 			vertexData[start+1].texcoord.y = 1.0f - float(latIndex+1) / float(kSubdivision);
+			vertexData[start+1].nomral.x = vertexData[start+1].position.x;
+			vertexData[start+1].nomral.y = vertexData[start+1].position.y;
+			vertexData[start+1].nomral.z = vertexData[start+1].position.z;
 
 			//c
 			vertexData[start+2].position.x = cos(lat) * cos(lon+kLonEvery);
@@ -1036,11 +1048,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			vertexData[start+2].position.w = 1.0f;
 			vertexData[start+2].texcoord.x = float(lonIndex+1) / float(kSubdivision);
 			vertexData[start+2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			vertexData[start+2].nomral.x = vertexData[start+2].position.x;
+			vertexData[start+2].nomral.y = vertexData[start+2].position.y;
+			vertexData[start+2].nomral.z = vertexData[start+2].position.z;
 
 			//c
 			vertexData[start + 3] = vertexData[start + 2];
 			//b
 			vertexData[start + 4] = vertexData[start + 1];
+			
 			//d
 			vertexData[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLonEvery);
 			vertexData[start + 5].position.y = sin(lat + kLatEvery);
@@ -1048,6 +1064,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 			vertexData[start + 5].position.w = 1.0f;
 			vertexData[start + 5].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
 			vertexData[start + 5].texcoord.y = 1.0f - float(latIndex+1) / float(kSubdivision);
+			vertexData[start + 5].nomral.x = vertexData[start + 5].position.x;
+			vertexData[start + 5].nomral.y = vertexData[start + 5].position.y;
+			vertexData[start + 5].nomral.z = vertexData[start + 5].position.z;
 		}
 	}
 
@@ -1128,14 +1147,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//1枚目の三角形
 	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };//左下
 	vertexDataSprite[0].texcoord = { 0.0f,1.0f};
+	vertexDataSprite[0].nomral = { 0.0f,0.0f,-1.0f };
+
 	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };//左上
 	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[1].nomral = { 0.0f,0.0f,-1.0f };
+
 	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };//右下
 	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-
+	vertexDataSprite[2].nomral = { 0.0f,0.0f,-1.0f };
+	
 	//2枚目の三角形
 	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };//左上
 	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[3].nomral = { 0.0f,0.0f,-1.0f };
+
 	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };//右上
 	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
 	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };//右下
