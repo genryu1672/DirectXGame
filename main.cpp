@@ -55,6 +55,7 @@ struct ModelData {
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
+	float shininess;
 };
 
 struct TransformationMatrix {
@@ -1339,6 +1340,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 	//マテリアルの内容
 	materialDataSprite->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->enableLighting = true;
+	materialData->shininess = 70;
 
 	//SpriteはLightingしないのでfalseを設定する
 	materialDataSprite->enableLighting = false;
