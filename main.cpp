@@ -57,6 +57,10 @@ struct Material {
 	int32_t enableLighting;
 };
 
+struct TransformationMatrix {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+};
 
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -1078,8 +1082,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(Material));//ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(Vector4));
 	
 	//wvp用のリソースを作る。今回はMatrix4x4  1つ分のサイズを用意する
-	ID3D12Resource* wvpResource = CreateBufferResource(device, sizeof(Matrix4x4));
+	ID3D12Resource* wvpResource = CreateBufferResource(device, sizeof(TransformationMatrix));
 	
+	//データを読み込む
+	TransformationMatrix* wvpData = nullptr;
+
 	//マテリアルにデータを書き込む
 	Material* materialData = nullptr;//Vector4* materialData = nullptr;
 	
@@ -1094,9 +1101,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
 	//インデックスはuint32_tとする
 	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-	//データを読み込む
-	Matrix4x4* wvpData = nullptr;
 	
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));//materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
@@ -1111,8 +1115,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	materialData->enableLighting = true;
 
 	//単位行列を書き込んでおく
-	*wvpData = MakeIdentity4x4();
-	
+	wvpData->WVP = MakeIdentity4x4();
+	wvpData->World = MakeIdentity4x4();
 	
 	////左下
 	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
@@ -1173,13 +1177,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
 
 	//Sprite用のTransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	ID3D12Resource* transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(Matrix4x4));
+	ID3D12Resource* transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(TransformationMatrix));
 	//データを書き込む
-	Matrix4x4* transformationMatrixDataSprite = nullptr;
+	TransformationMatrix* transformationMatrixDataSprite = nullptr;
 	//書き込むためのアドレスを取得
 	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	//単位行列を書き込んでおく
-	*transformationMatrixDataSprite = MakeIdentity4x4();
+	transformationMatrixDataSprite->WVP = MakeIdentity4x4();
+	transformationMatrixDataSprite->World = MakeIdentity4x4();
 
 	//CPUで動かす用のTransform
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
@@ -1189,8 +1194,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
 	Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kCLientWidth), float(kCLientHeight), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
-	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
-
+	transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
+	transformationMatrixDataSprite->World = worldMatrixSprite;
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
@@ -1331,15 +1336,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 
 			//transform.rotate.y += 0.03f;
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-			*wvpData = worldMatrix;
-
+	
 			//WVPMatrixを作成して設定する
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameratransform.scale, cameratransform.rotate, cameratransform.translate);
 			Matrix4x4 viewMatrix = Invers(cameraMatrix);
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kCLientWidth) / float(kCLientHeight), 0.1f, 100.0f);
 			Matrix4x4 worldViewprojectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-			*transformationMatrixData = worldViewprojectionMatrix;
-
+			wvpData->WVP = worldViewprojectionMatrix;//*transformationMatrixData = worldViewprojectionMatrix;
+			wvpData->World = worldMatrix;
 
 
 			//これから書き込むバックバッファのインデックスを取得
