@@ -7,6 +7,7 @@ Texture2D<float4>gTexture:register(t0);
 SamplerState gSampler:register(s0);
 struct Material {
 	float4 color;
+	int32_t enableLighting;
 };
 ConstantBuffer<Material>gMaterial:register(b0);
 
