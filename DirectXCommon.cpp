@@ -559,7 +559,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
 	return resource;
-
+	
 	//呼び出し
 	//ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(Vector4) * 3);
 }
@@ -658,6 +658,12 @@ void DirectXCommon::UpdateFixFPS()
 	}
 	//現在の時間を記録する
 	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::Finalize()
+{
+	//解放処理
+	CloseHandle(fenceEvent);//directXCommon->GetFenceEvent()
 }
 
 

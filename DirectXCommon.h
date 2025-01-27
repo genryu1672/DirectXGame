@@ -31,6 +31,7 @@ private://関数
 
 	void CreateDepthStencilTextureResource();
 
+	void Finalize();
 
 	//デバイスの生成
 
