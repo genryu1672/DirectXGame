@@ -743,6 +743,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//WindowsAPI解放
 	delete winApp;
 
-
 	return 0;
 }
