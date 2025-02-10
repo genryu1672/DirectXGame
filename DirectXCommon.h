@@ -27,11 +27,13 @@ public://メンバ変数
 
 	    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap( ID3D12Device* device,D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
+		void Finalize();
+
 private://関数
 
 	void CreateDepthStencilTextureResource();
 
-	void Finalize();
+	
 
 	//デバイスの生成
 

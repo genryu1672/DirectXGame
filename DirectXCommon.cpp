@@ -131,8 +131,8 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(const std::wstring
 	//成功したログを出す
 	Logger::Log(StringUtility::ConvertString(std::format(L"Comile Succeeded,path:{}\n", filePath, profile)));
 	//もう使わないリソースを解放
-	shaderSource->Release();
-	shaderResult->Release();
+	//shaderSource->Release();
+	//shaderResult->Release();
 	//実行用のバイナリを返却
 	return shaderBlob;
 }
@@ -662,6 +662,11 @@ void DirectXCommon::UpdateFixFPS()
 
 void DirectXCommon::Finalize()
 {
+	//ImGuiの終了処理。
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
 	//解放処理
 	CloseHandle(fenceEvent);//directXCommon->GetFenceEvent()
 }
