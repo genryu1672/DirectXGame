@@ -58,6 +58,22 @@ struct ModelData {
 	MaterialData material;
 };
 
+// コールバック関数のプロトタイプ宣言
+typedef void (*Callback)(int result);
+
+
+//Transform変数を作る
+Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+
+// 判定を行うコールバック関数
+void judge_result(int result) {
+
+	transform.rotate.x+=0.1f;
+	
+}
+
+
+
 
 void UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages)
 {
@@ -582,12 +598,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	indexDataSprite[5] = 2;
 
 
-
-	//Transform変数を作る
-	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-
 	Transform cameratransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 	while (true) {
+
+
+		Callback callback = judge_result;
+
+		callback(0);
+
 
 		if (winApp->ProcessMessage())
 		{
