@@ -711,7 +711,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//WindowsAPIの終了処理
 	winApp->Finalize();
 
-
+	
 	//WindowsAPI解放
 	delete winApp;
 
