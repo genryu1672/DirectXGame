@@ -685,7 +685,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	//指定したメッセージの表示を抑制する
 	infoQueue->PushStorageFilter(&filter);
 
-
 	//コマンドキューを生成する
 	ID3D12CommandQueue* commandQueue = nullptr;
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
