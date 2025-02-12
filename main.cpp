@@ -66,7 +66,7 @@ typedef void (*Callback)(int result);
 Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 // 判定を行うコールバック関数
-void judge_result(int result) {
+void rotate_result(int result) {
 
 	transform.rotate.x+=0.1f;
 	
@@ -602,7 +602,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {//main関数
 	while (true) {
 
 
-		Callback callback = judge_result;
+		Callback callback = rotate_result;
 
 		callback(0);
 
